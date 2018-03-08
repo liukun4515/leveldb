@@ -19,13 +19,26 @@ package org.iq80.leveldb;
 
 public class Options
 {
+
+    /**
+     * 表示创建open数据库的时候，如果数据库不存在是否创建
+     */
     private boolean createIfMissing = true;
+    /**
+     * 如果数据库存在就出错
+     */
     private boolean errorIfExists;
+    /**
+     * buffer默认大小为4m
+     */
     private int writeBufferSize = 4 << 20;
 
     private int maxOpenFiles = 1000;
-
+    // ?
     private int blockRestartInterval = 16;
+    /**
+    *BLOCK 大小默认为4k
+    */
     private int blockSize = 4 * 1024;
     private CompressionType compressionType = CompressionType.SNAPPY;
     private boolean verifyChecksums = true;
