@@ -26,6 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 这个类的作用就是用来枚举在一个DB实例下的各种文件：
+ * 如：CURRENT LOCK等文件
+ */
 public final class Filename
 {
     private Filename()
@@ -112,6 +116,7 @@ public final class Filename
      * If filename is a leveldb file, store the type of the file in *type.
      * The number encoded in the filename is stored in *number.  If the
      * filename was successfully parsed, returns true.  Else return false.
+     * 这里并没有返回true和false
      */
     public static FileInfo parseFileName(File file)
     {
@@ -214,16 +219,28 @@ public final class Filename
         return value.substring(0, value.length() - suffix.length());
     }
 
+    /**
+     * 静态内部类，文件信息，其实就是为了表示这个文件的类型是枚举的哪一个
+     */
     public static class FileInfo
     {
         private final FileType fileType;
         private final long fileNumber;
 
+        /**
+         * 一般文件类型的构造函数，其中filenumber就是0
+         * @param fileType
+         */
         public FileInfo(FileType fileType)
         {
             this(fileType, 0);
         }
 
+        /**
+         * 特殊的文件类型的构造函数，其中filenumber表示的就是文件的number，比如log文件、sst文件，menifest文件
+         * @param fileType
+         * @param fileNumber
+         */
         public FileInfo(FileType fileType, long fileNumber)
         {
             Preconditions.checkNotNull(fileType, "fileType is null");

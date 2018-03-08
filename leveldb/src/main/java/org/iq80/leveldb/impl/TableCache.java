@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * 这个类作用是干什么的？
+ */
 public class TableCache
 {
     private final LoadingCache<Long, TableAndFile> cache;
