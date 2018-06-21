@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 public abstract class Table
         implements SeekingIterable<Slice, Slice>
 {
+    /** 一个sstable查询的数据*/
     protected final String name;
     protected final FileChannel fileChannel;
     protected final Comparator<Slice> comparator;

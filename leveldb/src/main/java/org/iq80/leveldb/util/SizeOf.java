@@ -17,6 +17,9 @@
  */
 package org.iq80.leveldb.util;
 
+/**
+ * 用来表示Byte，Short，Integer，Long对应的字节大小
+ */
 public final class SizeOf
 {
     public static final byte SIZE_OF_BYTE = 1;

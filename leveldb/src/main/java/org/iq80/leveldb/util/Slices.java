@@ -31,6 +31,9 @@ import java.nio.charset.CodingErrorAction;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public final class Slices
 {
     public static Slice readLengthPrefixedBytes(SliceInput sliceInput)
@@ -39,9 +42,16 @@ public final class Slices
         return sliceInput.readBytes(length);
     }
 
+    /**
+     * 写日志可以使用前缀的方式
+     * @param sliceOutput
+     * @param value
+     */
     public static void writeLengthPrefixedBytes(SliceOutput sliceOutput, Slice value)
     {
+        // 写value的length
         VariableLengthQuantity.writeVariableLengthInt(value.length(), sliceOutput);
+        // 写value的byte
         sliceOutput.writeBytes(value);
     }
 
@@ -72,11 +82,13 @@ public final class Slices
             newCapacity = existingSlice.length();
         }
         int minNewCapacity = existingSlice.length() + minWritableBytes;
+        // 直到 newCapacity大小大于 需要的minNewCapacity就可以了
         while (newCapacity < minNewCapacity) {
             newCapacity <<= 1;
         }
 
         Slice newSlice = allocate(newCapacity);
+        // 从newSlice的0开始，把exist中的数据拷贝进去
         newSlice.setBytes(0, existingSlice, 0, existingSlice.length());
         return newSlice;
     }

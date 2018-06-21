@@ -27,7 +27,9 @@ import java.nio.charset.Charset;
 public class DynamicSliceOutput
         extends SliceOutput
 {
+    // slice其实底层提供的就是一个封装byte[] array的作用，真正操作的是input和output
     private Slice slice;
+    // 表示底层的slice的大小
     private int size;
 
     public DynamicSliceOutput(int estimatedSize)

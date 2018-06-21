@@ -28,4 +28,5 @@ import org.iq80.leveldb.impl.SeekingIterator;
 public interface InternalIterator
         extends SeekingIterator<InternalKey, Slice>
 {
+    // 内部的iterator并没有什么特殊的作用，只是key变为internalkey
 }

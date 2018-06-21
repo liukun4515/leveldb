@@ -26,8 +26,12 @@ import java.util.Map.Entry;
 public final class TableIterator
         extends AbstractSeekingIterator<Slice, Slice>
 {
+    /** 也不是internal key的iterator，就是一个普通的slice的iterator方法*/
+    /** seekinterator 查询一个文件或者table的数据*/
     private final Table table;
+    // 用来读取block handler
     private final BlockIterator blockIterator;
+    // 用来读取block中的数据
     private BlockIterator current;
 
     public TableIterator(Table table, BlockIterator blockIterator)

@@ -28,10 +28,20 @@ import java.util.Map.Entry;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+/**
+ * write操作都通过这个接口来操作
+ */
 public class WriteBatchImpl
         implements WriteBatch
 {
+    /**
+     * batch表示一系列操作
+     * 操作的key和value的都是slice
+     */
     private final List<Entry<Slice, Slice>> batch = newArrayList();
+    /**
+     * 统计内存的bytes大小
+     */
     private int approximateSize;
 
     public int getApproximateSize()
@@ -41,8 +51,10 @@ public class WriteBatchImpl
 
     public int size()
     {
+        // point操作的大小
         return batch.size();
     }
+
 
     @Override
     public WriteBatchImpl put(byte[] key, byte[] value)
@@ -67,6 +79,7 @@ public class WriteBatchImpl
     public WriteBatchImpl delete(byte[] key)
     {
         Preconditions.checkNotNull(key, "key is null");
+        // delete 操作value是null
         batch.add(Maps.immutableEntry(Slices.wrappedBuffer(key), (Slice) null));
         approximateSize += 6 + key.length;
         return this;
@@ -85,6 +98,11 @@ public class WriteBatchImpl
     {
     }
 
+    /**
+     * 把所有的操作都写入到handler对象中
+     * handler对象的写入操作都是一样的
+     * @param handler
+     */
     public void forEach(Handler handler)
     {
         for (Entry<Slice, Slice> entry : batch) {

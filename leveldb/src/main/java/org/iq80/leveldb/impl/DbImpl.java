@@ -90,18 +90,19 @@ public class DbImpl
     private final VersionSet versions;
 
     private final AtomicBoolean shuttingDown = new AtomicBoolean();
+    /** 所有操作的lock*/
     private final ReentrantLock mutex = new ReentrantLock();
     private final Condition backgroundCondition = mutex.newCondition();
 
     private final List<Long> pendingOutputs = newArrayList(); // todo
 
     private LogWriter log;
-
+    /** memtable*/
     private MemTable memTable;
     private MemTable immutableMemTable;
-
+    /** 内部的比较器*/
     private final InternalKeyComparator internalKeyComparator;
-
+    /** 并发和后台任务*/
     private volatile Throwable backgroundException;
     private final ExecutorService compactionExecutor;
     private Future<?> backgroundCompaction;
@@ -392,6 +393,7 @@ public class DbImpl
             // No work to be done
         }
         else {
+            // 提交一个后台任务
             backgroundCompaction = compactionExecutor.submit(new Callable<Void>()
             {
                 @Override
@@ -651,6 +653,7 @@ public class DbImpl
     public void delete(byte[] key)
             throws DBException
     {
+        // 写方法最终到writeInternal上
         writeInternal(new WriteBatchImpl().delete(key), new WriteOptions());
     }
 
@@ -675,14 +678,24 @@ public class DbImpl
         return writeInternal((WriteBatchImpl) updates, options);
     }
 
-    public Snapshot writeInternal(WriteBatchImpl updates, WriteOptions options)
+    /**
+     * 所有的更新操作（put和delete）的最后入口,不管是point操作还是batch操作都封装到batch中，
+     * 然后写入到memtable中
+     * @param updates
+     * @param options
+     * @return
+     * @throws DBException
+     */
+    private Snapshot writeInternal(WriteBatchImpl updates, WriteOptions options)
             throws DBException
     {
         checkBackgroundException();
         mutex.lock();
         try {
+            // 上次成功操作的sequence
             long sequenceEnd;
             if (updates.size() != 0) {
+                // 写数据之前申请空间，可能会sleep，wait，或者申请一个memtable或者flush一个memtable
                 makeRoomForWrite(false);
 
                 // Get sequence numbers for this change set
@@ -692,16 +705,17 @@ public class DbImpl
                 // Reserve this sequence in the version set
                 versions.setLastSequence(sequenceEnd);
 
-                // Log write
+                // Log write 写日志，把日志数据写入到一个slice钟
                 Slice record = writeWriteBatch(updates, sequenceBegin);
                 try {
                     log.addRecord(record, options.sync());
                 }
                 catch (IOException e) {
+                    // 如果日志出问题了就RE异常
                     throw Throwables.propagate(e);
                 }
 
-                // Update memtable
+                // Update memtable 写memtable
                 updates.forEach(new InsertIntoHandler(memTable, sequenceBegin));
             }
             else {
@@ -809,7 +823,9 @@ public class DbImpl
     private void makeRoomForWrite(boolean force)
     {
         Preconditions.checkState(mutex.isHeldByCurrentThread());
-
+        // 是否允许delay，如果force为true，就不允许delay，如果force为false就允许delay
+        // 如果是compaction memtable就不允许delay
+        // 如果仅仅是写入数据是允许delay
         boolean allowDelay = !force;
 
         while (true) {
@@ -826,6 +842,7 @@ public class DbImpl
                 // individual write by 1ms to reduce latency variance.  Also,
                 // this delay hands over some CPU to the compaction thread in
                 // case it is sharing the same core as the writer.
+                // 如果允许delay，并且L0的文件数量大于设slowdown的值，那么就放锁进行sleep
                 try {
                     mutex.unlock();
                     Thread.sleep(1);
@@ -843,19 +860,25 @@ public class DbImpl
             }
             else if (!force && memTable.approximateMemoryUsage() <= options.writeBufferSize()) {
                 // There is room in current memtable
+                // memtable 有空间，并且不需要force空间，属于在正常write数据，并且memtable没有满的情况
                 break;
             }
             else if (immutableMemTable != null) {
+                // 表示上一个memtable仍然在flush，但是当前的memtable也已经满了，就需要wait等待
+                // 表示在正常write数据，但是immutable已经满了，memtable也已经满了的情况
+
                 // We have filled up the current memtable, but the previous
                 // one is still being compacted, so we wait.
                 backgroundCondition.awaitUninterruptibly();
             }
             else if (versions.numberOfFilesInLevel(0) >= L0_STOP_WRITES_TRIGGER) {
+                // 如果数据写的太快导致L0的数据达到了stop的情况就让wait
                 // There are too many level-0 files.
 //                Log(options_.info_log, "waiting...\n");
                 backgroundCondition.awaitUninterruptibly();
             }
             else {
+                // 表示情况正常，但是需要一个新的memtable
                 // Attempt to switch to a new memtable and trigger compaction of old
                 Preconditions.checkState(versions.getPrevLogNumber() == 0);
 
@@ -883,7 +906,7 @@ public class DbImpl
 
                 // Do not force another compaction there is space available
                 force = false;
-
+                // 调用compaction方法
                 maybeScheduleCompaction();
             }
         }
@@ -1324,13 +1347,18 @@ public class DbImpl
 
         return writeBatch;
     }
-
+    // 把update中的数据按照操作的顺序写入到一个slice中
     private Slice writeWriteBatch(WriteBatchImpl updates, long sequenceBegin)
     {
         Slice record = Slices.allocate(SIZE_OF_LONG + SIZE_OF_INT + updates.getApproximateSize());
+        // slice中拿到一个output stream
         final SliceOutput sliceOutput = record.output();
+        // 开始sequence
         sliceOutput.writeLong(sequenceBegin);
+        // entry的大小
         sliceOutput.writeInt(updates.size());
+        // 传入一个自定义的handler
+        // 内部类
         updates.forEach(new Handler()
         {
             @Override
@@ -1351,6 +1379,9 @@ public class DbImpl
         return record.slice(0, sliceOutput.size());
     }
 
+    /**
+     * 静态的内部类，就为了帮助mamtable insert数据
+     */
     private static class InsertIntoHandler
             implements Handler
     {

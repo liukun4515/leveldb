@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SeekingIteratorAdapter
         implements DBIterator
 {
+    /** 封装了SnapshotSeekingIterator*/
+    /** DB的iterator都需要基于snapshot来进行*/
     private final SnapshotSeekingIterator seekingIterator;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -89,6 +91,7 @@ public class SeekingIteratorAdapter
 
     //
     // todo Implement reverse iterator
+    // 目前不支持reverse scan操作
     //
 
     @Override

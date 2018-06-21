@@ -19,12 +19,21 @@ package org.iq80.leveldb.util;
 
 import java.nio.ByteBuffer;
 
+/**
+ * 针对变长整数（Integer和Long）的一个Utils方法.
+ */
 public final class VariableLengthQuantity
 {
     private VariableLengthQuantity()
     {
     }
 
+
+    /**
+     * 得到变长Integer value对应的字节数组的大小，最大为4*8+4*1bits
+     * @param value
+     * @return
+     */
     public static int variableLengthSize(int value)
     {
         int size = 1;
@@ -35,6 +44,11 @@ public final class VariableLengthQuantity
         return size;
     }
 
+    /**
+     * 得到变长Long value对应的字节数组的大小，最大为8*8+8*1bits
+     * @param value
+     * @return
+     */
     public static int variableLengthSize(long value)
     {
         int size = 1;

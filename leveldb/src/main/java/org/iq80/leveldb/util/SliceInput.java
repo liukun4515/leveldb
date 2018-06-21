@@ -25,11 +25,18 @@ import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.charset.Charset;
 
+
+/**
+ * Slice is one bytes array.
+ * This class is used to read data from the {@code slice}.
+ */
 public final class SliceInput
         extends InputStream
         implements DataInput
 {
+    // 封装需要read的slice
     private final Slice slice;
+    // read的position
     private int position;
 
     public SliceInput(Slice slice)
@@ -71,6 +78,7 @@ public final class SliceInput
     }
 
     /**
+     * 返回可以读取的字节大小，每次读取的时候都需要先check是否有足够的size
      * Returns the number of readable bytes which is equal to
      * {@code (this.slice.length() - this.position)}.
      */

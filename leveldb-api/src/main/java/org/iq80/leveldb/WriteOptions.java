@@ -19,7 +19,13 @@ package org.iq80.leveldb;
 
 public class WriteOptions
 {
+    /**
+     * 是否同步flush wal
+     */
     private boolean sync;
+    /**
+     * 写操作是否返回snapshot
+     */
     private boolean snapshot;
 
     public boolean sync()

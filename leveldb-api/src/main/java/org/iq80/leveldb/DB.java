@@ -26,6 +26,7 @@ import java.util.Map;
 public interface DB
         extends Iterable<Map.Entry<byte[], byte[]>>, Closeable
 {
+    /** DB的读接口定义*/
     byte[] get(byte[] key)
             throws DBException;
 
@@ -36,7 +37,7 @@ public interface DB
     DBIterator iterator();
 
     DBIterator iterator(ReadOptions options);
-
+    /** DB的写接口定义*/
     void put(byte[] key, byte[] value)
             throws DBException;
 
@@ -48,6 +49,8 @@ public interface DB
 
     WriteBatch createWriteBatch();
 
+
+    /** 有write option的write操作*/
     /**
      * @return null if options.isSnapshot()==false otherwise returns a snapshot
      * of the DB after this operation.
@@ -69,8 +72,9 @@ public interface DB
     Snapshot write(WriteBatch updates, WriteOptions options)
             throws DBException;
 
+    /** 获得当前的snapshot*/
     Snapshot getSnapshot();
-
+    /** 获得多个range区间的size大小*/
     long[] getApproximateSizes(Range... ranges);
 
     String getProperty(String name);
@@ -79,12 +83,14 @@ public interface DB
      * Suspends any background compaction threads.  This methods
      * returns once the background compactions are suspended.
      */
+    /** 暂停后台的compaction任务*/
     void suspendCompactions()
             throws InterruptedException;
 
     /**
      * Resumes the background compaction threads.
      */
+    /** 重现开始compaction任务*/
     void resumeCompactions();
 
     /**
@@ -93,6 +99,7 @@ public interface DB
      * @param begin if null then compaction start from the first key
      * @param end if null then compaction ends at the last key
      */
+    /** 强制compaction某个区间*/
     void compactRange(byte[] begin, byte[] end)
             throws DBException;
 }

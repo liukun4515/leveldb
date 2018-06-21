@@ -17,6 +17,9 @@
  */
 package org.iq80.leveldb.impl;
 
+/**
+ * enum类型的操作，一种是删除，一种的add
+ */
 public enum ValueType
 {
     DELETION(0x00),

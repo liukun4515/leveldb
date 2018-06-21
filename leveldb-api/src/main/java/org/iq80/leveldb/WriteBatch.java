@@ -25,6 +25,8 @@ import java.io.Closeable;
 public interface WriteBatch
         extends Closeable
 {
+    /** 定义的batch操作，实现其实都是先写到内存中*/
+
     WriteBatch put(byte[] key, byte[] value);
 
     WriteBatch delete(byte[] key);

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * DB的工厂器
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public interface DBFactory

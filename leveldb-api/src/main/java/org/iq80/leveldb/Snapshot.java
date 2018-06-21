@@ -22,4 +22,7 @@ import java.io.Closeable;
 public interface Snapshot
         extends Closeable
 {
+    /**
+     * snapshot的实现其实就是一个基于 sequence number + file_version的image
+     */
 }

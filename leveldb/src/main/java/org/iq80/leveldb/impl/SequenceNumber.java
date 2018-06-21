@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 
 public final class SequenceNumber
 {
+    // 把operation 类型和 sequence number放在一起
     // We leave eight bits empty at the bottom so a type and sequence#
     // can be packed together into 64-bits.
     public static final long MAX_SEQUENCE_NUMBER = ((0x1L << 56) - 1);

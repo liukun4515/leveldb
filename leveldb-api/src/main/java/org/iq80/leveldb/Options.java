@@ -32,19 +32,34 @@ public class Options
      * buffer默认大小为4m
      */
     private int writeBufferSize = 4 << 20;
-
+    /**
+     * 默认打开的文件数量为1000
+     */
     private int maxOpenFiles = 1000;
     // ?
     private int blockRestartInterval = 16;
     /**
-    *BLOCK 大小默认为4k
+    * BLOCK 大小默认为4k
     */
     private int blockSize = 4 * 1024;
+    /**
+     * 数据压缩类型
+     */
     private CompressionType compressionType = CompressionType.SNAPPY;
+    /**
+     * 是否check sum
+     */
     private boolean verifyChecksums = true;
+    // ?
     private boolean paranoidChecks;
+    /**
+     * key的比较器
+     */
     private DBComparator comparator;
     private Logger logger;
+    /**
+     * 缓存的大小
+     */
     private long cacheSize;
 
     static void checkArgNotNull(Object value, String name)

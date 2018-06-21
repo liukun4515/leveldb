@@ -26,6 +26,10 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 
+
+/**
+ * slice output的作用就是在其实现中封装一个slice，然后每次对其的write都是写入到对应的slice中
+ */
 public abstract class SliceOutput
         extends OutputStream
         implements DataOutput

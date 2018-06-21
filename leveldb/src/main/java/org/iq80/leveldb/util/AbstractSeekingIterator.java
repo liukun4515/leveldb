@@ -22,9 +22,11 @@ import org.iq80.leveldb.impl.SeekingIterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
+
 public abstract class AbstractSeekingIterator<K, V>
         implements SeekingIterator<K, V>
 {
+    /** 抽象的seeking iterator方法*/
     private Entry<K, V> nextElement;
 
     @Override
@@ -84,6 +86,9 @@ public abstract class AbstractSeekingIterator<K, V>
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 把接口的方法都给实现，但是保留一些外部需要实现的方法即可
+     */
     protected abstract void seekToFirstInternal();
 
     protected abstract void seekInternal(K targetKey);

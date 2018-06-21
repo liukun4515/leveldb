@@ -24,6 +24,10 @@ import java.util.Map;
 /**
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
+
+/**
+ * DB Iterator其实就是java的Iterator的扩展
+ */
 public interface DBIterator
         extends Iterator<Map.Entry<byte[], byte[]>>, Closeable
 {
@@ -41,6 +45,7 @@ public interface DBIterator
     /**
      * Returns the next element in the iteration, without advancing the iteration.
      */
+    /** peek操作值拿值但是不移动iteration*/
     Map.Entry<byte[], byte[]> peekNext();
 
     /**

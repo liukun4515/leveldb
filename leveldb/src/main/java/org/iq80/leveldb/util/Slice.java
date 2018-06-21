@@ -38,10 +38,12 @@ import static org.iq80.leveldb.util.SizeOf.SIZE_OF_SHORT;
 
 /**
  * Little Endian slice of a byte array.
+ * 就是一个字节数组，如果写入一个int，那么int的低字节位置在数组的低字节位置。
  */
 public final class Slice
         implements Comparable<Slice>
 {
+    /** slice本身是个可以表的类型*/
     private final byte[] data;
     private final int offset;
     private final int length;
@@ -557,6 +559,7 @@ public final class Slice
      * of the returned buffer or this buffer affects each other's content
      * while they maintain separate indexes and marks.
      */
+    // 深度拷贝
     public Slice slice()
     {
         return slice(0, length);
@@ -609,6 +612,7 @@ public final class Slice
      * Converts this buffer's sub-region into a NIO buffer.  The returned
      * buffer shares the content with this buffer.
      */
+    // 深度拷贝
     public ByteBuffer toByteBuffer(int index, int length)
     {
         Preconditions.checkPositionIndexes(index, index + length, this.length);
@@ -679,6 +683,7 @@ public final class Slice
 
         int minLength = Math.min(this.length, that.length);
         for (int i = 0; i < minLength; i++) {
+            // 无符号的比较需要把有符号的byte转化为int或者short进行比较
             int thisByte = 0xFF & this.data[this.offset + i];
             int thatByte = 0xFF & that.data[that.offset + i];
             if (thisByte != thatByte) {

@@ -19,9 +19,13 @@ package org.iq80.leveldb.util;
 
 import java.util.Comparator;
 
+/**
+ * 基于slice的一个comparator,默认的是使用Slice中的byte的大小比较
+ */
 public final class SliceComparator
         implements Comparator<Slice>
 {
+    /** slice的比较器，当需要对slice进行sort的时候需要使用*/
     public static final SliceComparator SLICE_COMPARATOR = new SliceComparator();
 
     @Override

@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 public final class SnapshotSeekingIterator
         extends AbstractSeekingIterator<Slice, Slice>
 {
+    /** 这个iterator不是 internal key*/
     private final DbIterator iterator;
     private final SnapshotImpl snapshot;
     private final Comparator<Slice> userComparator;

@@ -24,6 +24,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 
+/**
+ * 是slice output的基本实现，作用就是对slice进入put数据
+ */
 public class BasicSliceOutput
         extends SliceOutput
 {

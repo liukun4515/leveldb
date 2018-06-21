@@ -24,6 +24,13 @@ import java.util.Map.Entry;
 public interface SeekingIterator<K, V>
         extends PeekingIterator<Entry<K, V>>
 {
+
+    /**
+     * 提供hasnext，peek，next，remove
+     */
+
+    /** PeekingIterator 只提供了next，peek方法，peek并不会advancing the iterator*/
+
     /**
      * Repositions the iterator so the beginning of this block.
      */
