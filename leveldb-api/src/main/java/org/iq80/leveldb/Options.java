@@ -34,7 +34,7 @@ public class Options
     private int writeBufferSize = 4 << 20;
 
     private int maxOpenFiles = 1000;
-    // ?
+
     private int blockRestartInterval = 16;
     /**
     *BLOCK 大小默认为4k
