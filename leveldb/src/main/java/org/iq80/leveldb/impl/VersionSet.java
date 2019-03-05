@@ -59,7 +59,8 @@ public class VersionSet
 {
     private static final int L0_COMPACTION_TRIGGER = 4;
 
-    public static final int TARGET_FILE_SIZE = 2 * 1048576;
+    // 2M -> 10M 或者 2M -> 50M
+    public static final int TARGET_FILE_SIZE = 50 * 1048576;
 
     // Maximum bytes of overlaps in grandparent (i.e., level+2) before we
     // stop building a single file in a level.level+1 compaction.
